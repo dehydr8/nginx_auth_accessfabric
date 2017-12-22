@@ -99,7 +99,7 @@ typedef struct {
   ngx_array_t *jwks;
 } ngx_http_auth_accessfabric_main_conf_t;
 
-extern ngx_module_t ngx_http_auth_accessfabric;
+extern ngx_module_t ngx_http_auth_accessfabric_module;
 
 static void *ngx_http_auth_accessfabric_create_main_conf(ngx_conf_t *cf) {
   ngx_http_auth_accessfabric_main_conf_t *mainconf;
@@ -239,9 +239,9 @@ static void af_cpyjstr(ngx_pool_t *pool, json_t *input, ngx_str_t *target) {
 static ngx_int_t ngx_http_auth_accessfabric_handler(ngx_http_request_t *r) {
   ngx_table_elt_t *hdr = NULL;
   ngx_http_auth_accessfabric_loc_conf_t *cf =
-      ngx_http_get_module_loc_conf(r, ngx_http_auth_accessfabric);
+      ngx_http_get_module_loc_conf(r, ngx_http_auth_accessfabric_module);
   ngx_http_auth_accessfabric_main_conf_t *mainconf =
-      ngx_http_get_module_main_conf(r, ngx_http_auth_accessfabric);
+      ngx_http_get_module_main_conf(r, ngx_http_auth_accessfabric_module);
 
   if (!cf->enabled) {
     return NGX_DECLINED;
@@ -371,7 +371,7 @@ static ngx_int_t ngx_http_auth_accessfabric_handler(ngx_http_request_t *r) {
       af_cpyjstr(r->pool, sub, &mctx->sub);
       af_cpyjstr(r->pool, email, &mctx->email);
 
-      ngx_http_set_ctx(r, mctx, ngx_http_auth_accessfabric);
+      ngx_http_set_ctx(r, mctx, ngx_http_auth_accessfabric_module);
 
       xjwt_verify_success_destroy(success);
       return NGX_OK;
@@ -404,7 +404,7 @@ static ngx_int_t ngx_http_auth_accessfabric_init(ngx_conf_t *cf) {
   ngx_keyval_t *kv;
   ngx_http_core_main_conf_t *coreconf;
   ngx_http_auth_accessfabric_main_conf_t *mainconf =
-      ngx_http_conf_get_module_main_conf(cf, ngx_http_auth_accessfabric);
+      ngx_http_conf_get_module_main_conf(cf, ngx_http_auth_accessfabric_module);
 
   coreconf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
 
@@ -500,7 +500,7 @@ static ngx_command_t ngx_http_auth_accessfabric_commands[] = {
 static ngx_int_t ngx_http_auth_accessfabric_get_sub(
     ngx_http_request_t *r, ngx_http_variable_value_t *v, uintptr_t data) {
   ngx_http_auth_accessfabric_req_ctx_t *mctx =
-      ngx_http_get_module_ctx(r, ngx_http_auth_accessfabric);
+      ngx_http_get_module_ctx(r, ngx_http_auth_accessfabric_module);
   if (mctx == NULL) {
     v->not_found = 1;
     return NGX_OK;
@@ -522,7 +522,7 @@ static ngx_int_t ngx_http_auth_accessfabric_get_sub(
 static ngx_int_t ngx_http_auth_accessfabric_get_email(
     ngx_http_request_t *r, ngx_http_variable_value_t *v, uintptr_t data) {
   ngx_http_auth_accessfabric_req_ctx_t *mctx =
-      ngx_http_get_module_ctx(r, ngx_http_auth_accessfabric);
+      ngx_http_get_module_ctx(r, ngx_http_auth_accessfabric_module);
   if (mctx == NULL) {
     v->not_found = 1;
     return NGX_OK;
@@ -574,7 +574,7 @@ static ngx_int_t ngx_http_auth_accessfabric_init_worker(ngx_cycle_t *cycle) {
   curl_global_init(CURL_GLOBAL_DEFAULT);
 
   mainconf =
-      ngx_http_cycle_get_module_main_conf(cycle, ngx_http_auth_accessfabric);
+      ngx_http_cycle_get_module_main_conf(cycle, ngx_http_auth_accessfabric_module);
   if (mainconf == NULL) {
     ngx_log_error(
         NGX_LOG_ALERT, cycle->log, 0,
@@ -604,7 +604,7 @@ static void ngx_http_auth_accessfabric_exit_worker(ngx_cycle_t *cycle) {
   }
 
   mainconf =
-      ngx_http_cycle_get_module_main_conf(cycle, ngx_http_auth_accessfabric);
+      ngx_http_cycle_get_module_main_conf(cycle, ngx_http_auth_accessfabric_module);
   if (mainconf == NULL) {
     ngx_log_error(
         NGX_LOG_ALERT, cycle->log, 0,

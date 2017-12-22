@@ -1,6 +1,44 @@
+
+ngx_feature_name=
+ngx_feature_run=no
+ngx_feature_path=
+ngx_feature_incs="#include <xjwt/xjwt.h>"
+ngx_feature_test='XJWT_ERR(XJWT_SUCCESS);'
+
+# set LIBXJWT_INC and LIBXJWT_LIB envs for different install paths
+if [ -n "$LIBXJWT_INC" -o -n "$LIBXJWT_LIB" ]; then
+    ngx_feature="libxjwt library in \"$LIBXJWT_INC\" and \"$LIBXJWT_LIB\" (specified by the LIBXJWT_LIB and LIBXJWT_LIB env)"
+    ngx_feature_path="${LIBXJWT_INC}"
+    ngx_feature_libs="-Wl,-rpath,${LIBXJWT_LIB} -L${LIBXJWT_LIB} -lxjwt"
+
+    . auto/feature
+    if [ $ngx_found = no ]; then
+        cat << END
+$0: error: ngx_http_auth_accessfabric_module requires the libxjwt library.
+     Set \$LIBXJWT_INC and \$LIBXJWT_LIB enviorment variables to the libxjwt installation.
+END
+        exit 1;
+    fi
+else
+    ngx_feature="libxjwt library"
+    ngx_feature_libs="-lxjwt"
+
+    . auto/feature
+
+    if [ $ngx_found = no ]; then
+        cat << END
+$0: error: ngx_http_auth_accessfabric_module requires the libxjwt library.
+     Set \$LIBXJWT_INC and \$LIBXJWT_LIB enviorment variables to the libxjwt installation.
+END
+        exit 1
+    fi
+
+fi
+
 ngx_module_type=HTTP
 ngx_module_name=ngx_http_auth_accessfabric_module
-ngx_module_libs="-lxjwt -lcurl"
+ngx_module_libs="${ngx_feature_libs} -lcurl"
+ngx_module_incs="${ngx_feature_path}"
 ngx_module_srcs="$ngx_addon_dir/ngx_http_auth_accessfabric_module.c"
 
 . auto/module

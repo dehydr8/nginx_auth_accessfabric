@@ -72,6 +72,6 @@ download_and_hash "${NGINX_LOCAL_TAR}" "${NGINX_URL}" "${NGINX_HASH}"
 tar -xz -f "${NGINX_LOCAL_TAR}" -C "${DIR}/build"
 cd "${DIR}/build/nginx-${NGINX_VERSION}"
 
-./configure --add-dynamic-module="${DIR}/../" --prefix="${NGINX_INST_DIR}" --with-cpp="-I${LIBXJWT_INST_DIR}/include"
+./configure --add-dynamic-module="${DIR}/../" --prefix="${NGINX_INST_DIR}" --with-cpp="-I${LIBXJWT_INST_DIR}/usr/local/include"
 make
 make install

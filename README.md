@@ -63,20 +63,18 @@ make
 sudo make install
 ```
 
-## Building from source on Centos7 (includes libxjwt build)
+## Building from source on Centos7 (includes libxjwt rpm build and install) You may need to adjust versions.
 
 ```
-sudo yum install git wget pcre-devel zlib-devel libcurl-devel scons jansson-devel openssl-devel -y
+sudo yum install git wget pcre-devel zlib-devel libcurl-devel jansson-devel openssl-devel redhat-rpm-config rpm-build -y
 sudo yum groupinstall "Development Tools" -y
 git clone https://github.com/ScaleFT/libxjwt.git
-git clone git@github.com:ScaleFT/nginx_auth_accessfabric.git
-cd libxjwt/
-scons build
-sudo scons install
-cd ..
-echo /usr/local/lib | sudo tee -a /etc/ld.so.conf.d/local.conf
-sudo ldconfig
-# Prerelease step.
+git clone https://github.com/ScaleFT/nginx_auth_accessfabric.git 
+mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
+rpmbuild --undefine=_disable_source_fetch -bb ./libxjwt/dist/rpm/libxjwt.spec
+sudo rpm -i ./rpmbuild/RPMS/libxjwt-devel-1.0.2-1.el7.centos.x86_64.rpm
+sudo rpm -i ./rpmbuild/RPMS/libxjwt-1.0.2-1.el7.centos.x86_64.rpm
 wget http://nginx.org/download/nginx-1.13.7.tar.gz
 tar xvzf nginx-1.13.7.tar.gz
 cd nginx-1.13.7
@@ -85,16 +83,22 @@ make
 sudo make install
 ```
 
-## Building an rpm for Centos7 using the patch for the nginx.spec file (dist/rpm/centos7/nginx.spec.patch)
-You may need to adjust versions here and in the patch.  This is provide mainly as a template to aid in building an rpm suitable for use with the factory nginx rpm.
-This assumes you have built or aquired and installed libxjwt and libxjwt-devel via rpm. (There's a spec file for building that rpm in it's repo.)
+## Building an rpm for CentOS 7 using the patch for the [nginx.spec file](./dist/rpm/centos7/nginx.spec.patch)
+You may need to adjust versions here and in the patch.  This is provide mainly as a template to aid in building a module rpm suitable for use with the factory nginx rpm.
+This assumes you have built or aquired and installed libxjwt and libxjwt-devel via rpm. There's a spec file for building that rpm in it's repo [here.](https://github.com/ScaleFT/libxjwt/blob/master/dist/rpm/libxjwt.spec)
+If you built the rpm for libjwxt, you can skip these steps and start with yumdownloader.
 ```
 sudo yum install redhat-rpm-config rpm-build -y
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
+```
+```
 yumdownloader --source nginx
 rpm -ivh ./nginx-1.12.2-1.el7.src.rpm
 cd ~/rpmbuild/SPECS
+```
+Aquire the patch [file](./dist/rpm/centos7/nginx.spec.patch)
+```
 patch < nginx.spec.patch
 rpmbuild -ba ~/rpmbuild/SPECS/nginx.spec
 sudo rpm -i ~/rpmbuild/RPMS/nginx-mod-http-auth-accessfabric-1.12.2-1.el7.centos.x86_64.rpm

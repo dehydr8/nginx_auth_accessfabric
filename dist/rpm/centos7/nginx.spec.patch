@@ -1,0 +1,66 @@
+--- nginx.spec  2017-10-18 08:08:23.000000000 +0000
++++ nginx.spec.af       2017-12-26 16:02:21.949915944 +0000
+@@ -86,6 +86,7 @@
+ Requires:          nginx-mod-http-xslt-filter = %{epoch}:%{version}-%{release}
+ Requires:          nginx-mod-mail = %{epoch}:%{version}-%{release}
+ Requires:          nginx-mod-stream = %{epoch}:%{version}-%{release}
++Requires:          nginx-mod-http-auth-accessfabric = %{epoch}:%{version}-%{release}
+
+ %description all-modules
+ %{summary}.
+@@ -168,6 +169,14 @@
+ %description mod-stream
+ %{summary}.
+
++%package mod-http-auth-accessfabric
++Group:             System Environment/Daemons
++Summary:           ScaleFT Accessfabric Auth module 
++Requires:          nginx
++Requires:          libxjwt-devel
++
++%description mod-http-auth-accessfabric
++%{summary}.
+
+ %prep
+ %setup -q
+@@ -238,6 +247,7 @@
+ %endif
+     --with-debug \
+     --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
++    --add-dynamic-module="/home/chris_rhodes/nginx_auth_accessfabric" \
+     --with-ld-opt="$RPM_LD_FLAGS -Wl,-E" # so the perl module finds its symbols
+
+ make %{?_smp_mflags}
+@@ -303,6 +313,8 @@
+     > %{buildroot}%{_datadir}/nginx/modules/mod-mail.conf
+ echo 'load_module "%{_libdir}/nginx/modules/ngx_stream_module.so";' \
+     > %{buildroot}%{_datadir}/nginx/modules/mod-stream.conf
++echo 'load_module "%{_libdir}/nginx/modules/ngx_http_auth_accessfabric_module.so";' \
++    > %{buildroot}%{_datadir}/nginx/modules/mod-http-auth-accessfabric.conf
+
+ %pre filesystem
+ getent group %{nginx_user} > /dev/null || groupadd -r %{nginx_user}
+@@ -344,6 +356,11 @@
+     /usr/bin/systemctl reload nginx.service >/dev/null 2>&1 || :
+ fi
+
++%post mod-http-auth-accessfabric
++if [ $1 -eq 1 ]; then
++    /usr/bin/systemctl reload nginx.service >/dev/null 2>&1 || :
++fi
++
+ %preun
+ %systemd_preun nginx.service
+
+@@ -428,6 +445,11 @@
+ %{_datadir}/nginx/modules/mod-stream.conf
+ %{_libdir}/nginx/modules/ngx_stream_module.so
+
++%files mod-http-auth-accessfabric
++%{_datadir}/nginx/modules/mod-http-auth-accessfabric.conf
++%{_libdir}/nginx/modules/ngx_http_auth_accessfabric_module.so
++
++
+
+ %changelog
+ * Wed Oct 18 2017 Luboš Uhliarik <luhliari@redhat.com> - 1:1.12.2-1

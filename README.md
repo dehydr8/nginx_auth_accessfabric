@@ -97,7 +97,7 @@ yumdownloader --source nginx
 rpm -ivh ./nginx-1.12.2-1.el7.src.rpm
 cd ~/rpmbuild/SPECS
 ```
-Aquire the patch [file](./dist/rpm/centos7/nginx.spec.patch)
+Aquire the patch [file](./dist/rpm/centos7/nginx.spec.patch), apply, build and install the rpm.
 ```
 patch < nginx.spec.patch
 rpmbuild -ba ~/rpmbuild/SPECS/nginx.spec

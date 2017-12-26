@@ -83,10 +83,10 @@ make
 sudo make install
 ```
 
-## Building an rpm for CentOS 7 using the patch for the [nginx.spec file](./dist/rpm/centos7/nginx.spec.patch)
-You may need to adjust versions here and in the patch.  This is provide mainly as a template to aid in building a module rpm suitable for use with the factory nginx rpm.
-This assumes you have built or aquired and installed libxjwt and libxjwt-devel via rpm. There's a spec file for building that rpm in it's repo [here.](https://github.com/ScaleFT/libxjwt/blob/master/dist/rpm/libxjwt.spec)
-If you built the rpm for libjwxt, you can skip these steps and start with yumdownloader.
+## Building an rpm for CentOS 7 using the [patch](./dist/rpm/centos7/nginx.spec.patch) for the nginx.spec file.
+You may need to adjust versions in the instuctions and in the [patch](./dist/rpm/centos7/nginx.spec.patch).  This is provide mainly as a template to aid in building a module rpm suitable for use with the factory nginx rpm.
+This assumes you have built or aquired and installed libxjwt and libxjwt-devel via rpm. There is a spec file for building that rpm in it's repo [here](https://github.com/ScaleFT/libxjwt/blob/master/dist/rpm/libxjwt.spec).
+If you have already built the rpm for libjwxt on the same build host, you may skip these steps and start with yumdownloader.
 ```
 sudo yum install redhat-rpm-config rpm-build -y
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}

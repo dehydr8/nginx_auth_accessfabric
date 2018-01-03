@@ -4,9 +4,9 @@ set -eo pipefail
 
 set -x
 
-LIBXJWT_VERSION="1.0.1"
-LIBXJWT_HASH="e2dec5ffe9d9db69eb66ed9596afd83dfaefed515a9ba7cf32a2e785c4cb14cb"
-LIBXJWT_URL="https://github.com/ScaleFT/libxjwt/archive/v${LIBXJWT_VERSION}.tar.gz"
+LIBXJWT_VERSION="1.0.2"
+LIBXJWT_HASH="267f922cd8e8e357032763b8a31ad771e9622db6c202b88d107c9d74acc2867c"
+LIBXJWT_URL="https://github.com/ScaleFT/libxjwt/releases/download/v${LIBXJWT_VERSION}/libxjwt-${LIBXJWT_VERSION}.tar.gz"
 
 NGINX_VERSION="1.13.7"
 NGINX_HASH="beb732bc7da80948c43fd0bf94940a21a21b1c1ddfba0bd99a4b88e026220f5c"
@@ -58,9 +58,9 @@ cd ..
 tar -xz -f "${LIBXJWT_LOCAL_TAR}" -C "${DIR}/build"
 cd "${DIR}/build/libxjwt-${LIBXJWT_VERSION}"
 
-scons
-
-scons destdir="${LIBXJWT_INST_DIR}" install
+./configure
+make
+make DESTDIR="${LIBXJWT_INST_DIR}" install
 
 cd "${DIR}"
 cd ..

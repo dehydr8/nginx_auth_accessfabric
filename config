@@ -1,7 +1,11 @@
+ngx_module_libs=
+ngx_module_incs=
 
 ngx_feature_name=
 ngx_feature_run=no
 ngx_feature_path=
+ngx_feature_libs=
+
 ngx_feature_incs="#include <xjwt/xjwt.h>"
 ngx_feature_test='XJWT_ERR(XJWT_SUCCESS);'
 
@@ -32,13 +36,54 @@ $0: error: ngx_http_auth_accessfabric_module requires the libxjwt library.
 END
         exit 1
     fi
-
 fi
+
+ngx_module_libs="${ngx_module_libs} ${ngx_feature_libs}"
+ngx_module_incs="${ngx_module_incs} ${ngx_feature_path}"
+
+
+ngx_feature_name=
+ngx_feature_run=no
+ngx_feature_path=
+ngx_feature_libs=
+
+ngx_feature_incs="#include <curl/curl.h>"
+ngx_feature_test='curl_version();'
+
+# set LIBCURL_INC and LIBCURL_LIB envs for different install paths
+if [ -n "$LIBCURL_INC" -o -n "$LIBCURL_LIB" ]; then
+    ngx_feature="libcurl library in \"$LIBCURL_INC\" and \"$LIBCURL_LIB\" (specified by the LIBCURL_INC and LIBCURL_LIB env)"
+    ngx_feature_path="${LIBCURL_INC}"
+    ngx_feature_libs="-Wl,-rpath,${LIBCURL_LIB} -L${LIBCURL_LIB} -lcurl"
+
+    . auto/feature
+    if [ $ngx_found = no ]; then
+        cat << END
+$0: error: ngx_http_auth_accessfabric_module requires the libcurl library.
+     Set \$LIBCURL_INC and \$LIBCURL_LIB enviorment variables to the libcurl installation.
+END
+        exit 1;
+    fi
+else
+    ngx_feature="libcurl library"
+    ngx_feature_libs="-lcurl"
+
+    . auto/feature
+
+    if [ $ngx_found = no ]; then
+        cat << END
+$0: error: ngx_http_auth_accessfabric_module requires the libcurl library.
+     Set \$LIBCURL_INC and \$LIBCURL_LIB enviorment variables to the libcurl installation.
+END
+        exit 1
+    fi
+fi
+
+ngx_module_libs="${ngx_module_libs} ${ngx_feature_libs}"
+ngx_module_incs="${ngx_module_incs} ${ngx_feature_path}"
 
 ngx_module_type=HTTP
 ngx_module_name=ngx_http_auth_accessfabric_module
-ngx_module_libs="${ngx_feature_libs} -lcurl"
-ngx_module_incs="${ngx_feature_path}"
 ngx_module_srcs="$ngx_addon_dir/ngx_http_auth_accessfabric_module.c"
 
 . auto/module

@@ -981,6 +981,7 @@ static ngx_int_t af_jwk__thread_main(af_jwk_refresher_t *jr) {
       }
     } else {
       if (rv == ETIMEDOUT) {
+        pthread_mutex_unlock(&jr->mtx);
         af_jwk__refresh(jr);
       }
     }

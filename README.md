@@ -39,7 +39,7 @@ On sucessful authentication, `ngx_http_auth_accessfabric` sets the variables `au
 
 ## Dependencies
 
-- nginx >= 1.11
+- nginx >= 1.10
 - [libxjwt](https://github.com/ScaleFT/libxjwt): Library for validating JWTs
 - [libcurl](https://curl.haxx.se/libcurl/): Library for fetching remote JWKs
 - [OpenSSL](https://www.openssl.org/): `libxjwt` uses EC and EVP APIs.
@@ -63,7 +63,7 @@ make
 sudo make install
 ```
 
-## Building from source on Centos7 (includes libxjwt rpm build and install) You may need to adjust versions.
+## Building from source on CentOS 7 (includes libxjwt rpm build and install) You may need to adjust versions.
 
 ```
 sudo yum install git wget pcre-devel zlib-devel libcurl-devel jansson-devel openssl-devel redhat-rpm-config rpm-build -y

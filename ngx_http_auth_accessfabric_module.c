@@ -131,7 +131,7 @@ static char *ngx_http_auth_accessfabric_merge_loc_conf(ngx_conf_t *cf,
   ngx_http_auth_accessfabric_loc_conf_t *prev = parent;
   ngx_http_auth_accessfabric_loc_conf_t *conf = child;
 
-  ngx_conf_merge_value(conf->enabled, prev->enabled, NGX_CONF_UNSET);
+  ngx_conf_merge_value(conf->enabled, prev->enabled, 0);
 
   ngx_conf_merge_str_value(conf->audience, prev->audience, "");
   ngx_conf_merge_str_value(conf->issuer, prev->issuer, "");
@@ -243,7 +243,7 @@ static ngx_int_t ngx_http_auth_accessfabric_handler(ngx_http_request_t *r) {
   ngx_http_auth_accessfabric_main_conf_t *mainconf =
       ngx_http_get_module_main_conf(r, ngx_http_auth_accessfabric_module);
 
-  if (!cf->enabled) {
+  if (cf->enabled == NGX_CONF_UNSET || !cf->enabled) {
     return NGX_DECLINED;
   }
 

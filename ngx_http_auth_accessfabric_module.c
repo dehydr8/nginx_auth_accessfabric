@@ -754,7 +754,7 @@ static af_jwk_req_t *af_jwk__req_make(af_jwk_refresher_t *jr) {
 }
 
 #ifdef __linux__
-static int getentropy(void *buf, size_t buflen) {
+int getentropy(void *buf, size_t buflen) {
 /**
  * getrandom is not available on most Linux yet, and we don't have
  * an easy autoconf for it.
